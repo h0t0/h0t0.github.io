@@ -7,6 +7,7 @@ tag: [thm,boxes]
 
 # TryHackMe Chocolate Factory WriteUp
 
+## Hello and Welcome to my first writeup!
 ## **Reconnaissance and Enumeration**
 
 #### first we scan the machine using nmap using the command: nmap -sV [IP HERE]
