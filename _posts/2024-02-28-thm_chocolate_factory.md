@@ -1,5 +1,4 @@
 ---
-layout: default
 title: TryHackMe Chocolate Factory WriteUp
 date: 2024-02-28 17:00:00 +0300
 categories: [writeups]
