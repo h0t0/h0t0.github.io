@@ -145,7 +145,7 @@ dir: specify we want to bruteforce directiories.
 #### The first thing you should check for is `sudo -l`,
 #### result:
 
-```bash
+```bash 
 Matching Defaults entries for charlie on chocolate-factory:
    env_reset, mail_badpass,
    
