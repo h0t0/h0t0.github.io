@@ -1,0 +1,160 @@
+
+## Introspection
+
+### 100
+
+Web
+
+Welcome to the Secret Agents Portal. Find the flag hidden in the secrets of the Universe!!!
+
+Author: @5h1kh4r
+
+`Web Instance: http://34.16.207.52:5134`
+
+
+we are presented with a page with a box to check if the flag is right or not.
+
+![alt text](</assets/img/osctf/Pasted image 20240713183437.png>)
+
+if we view the page source we will find a javascript file "script.js".
+
+![alt text](</assets/img/osctf/Pasted image 20240713183515.png>)
+
+we open it and we get the flag!!!!
+
+![alt text](</assets/img/osctf/Pasted image 20240713183540.png>)
+
+Flag: `OSCTF{Cr4zY_In5P3c71On}`
+
+---
+
+
+## Style Query Listing...?
+
+### 100
+
+Web
+
+pfft.. Listen, I've gained access to this login portal but I'm not able to log in. The admins are surely hiding something from the public, but... I don't understand what. Here take the link and be quiet, don't share it with anyone
+
+Author: @5h1kh4r
+
+`Web instance: http://34.16.207.52:3635/`
+
+we are presented with a login page, if you try to login with default credentials nothing will work, so as the name suggests its SQL injection.
+
+![alt text](</assets/img/osctf/Pasted image 20240713184020.png>)
+
+the first payload i tried is `admin' or true-- -`
+![alt text](</assets/img/osctf/Pasted image 20240713184058.png>)
+
+and we get an exception from the Werkzug server, the good thing about these messages is that it shows 5 lines above and bottom of the line that got the error.
+
+![alt text](</assets/img/osctf/Pasted image 20240713184219.png>)
+
+```python
+if username == 'admin':
+	return redirect(url_for('admin'))
+```
+
+so if the user is admin in the input it will redirect the user to the admin page, which is /admin.
+
+if we go to `http://34.16.207.52:3635/admin` we will find the flag!!!
+
+![alt text](</assets/img/osctf/Pasted image 20240713184409.png>)
+
+
+Flag: `OSCTF{D1r3ct0RY_BrU7t1nG_4nD_SQL}`
+
+---
+
+## Indoor WebApp
+
+### 100
+
+Web
+
+The production of this application has been completely indoor so that no corona virus spreads, but that's an old talk right?
+
+Author: @5h1kh4r
+
+`Web Instance: http://34.16.207.52:2546`
+
+We see the Vulnerability name in the main page, with a button to view a profile.
+
+![alt text](</assets/img/osctf/Pasted image 20240713184705.png>)
+
+the button will take us to `http://34.16.207.52:2546/profile?user_id=1`
+we see a username and an email.
+but in the link the query parameter `?user_id=1` indicates that we can change the number to view other profiles, for sanity check i like to try 2.
+
+![alt text](</assets/img/osctf/Pasted image 20240713184930.png>)
+
+and we got the flag!!!
+
+Flag: `OSCTF{1nd00r_M4dE_n0_5enS3}`
+
+---
+
+## Action Notes
+
+### 380
+
+Web
+
+I have created this notes taking app so that I don't forget what I've studied
+
+Author: @5h1kh4r
+
+`Web Instance: http://34.16.207.52:8965`
+
+In the main page we can either login or register, so i register an account and login with it.
+
+![alt text](</assets/img/osctf/Pasted image 20240713185204.png>)
+
+We can add notes to our profile, but i first looked to the cookies.
+![alt text](</assets/img/osctf/Pasted image 20240713185254.png>)
+
+
+`session:eyJ1c2VybmFtZSI6InRlc3QyMTMifQ.ZpKirg.NeEcUdx51_beLfIjFVIdC60Jqj8`
+
+the session cookie looks like a JWT but if you try to decode it with [jwt.io](https://jwt.io/)
+you will get an error.
+
+but we know this is a flask server because if you go to /console you will get:
+![alt text](</assets/img/osctf/Pasted image 20240713185530.png>)
+
+in [HackTricks](https://book.hacktricks.xyz/network-services-pentesting/pentesting-web/flask) we can see there is a tool called `flask-unsign`, if we put the cookie in it and try to decode it we will get:
+```bash
+flask-unsign --decode --cookie "eyJ1c2VybmFtZSI6InRlc3QyMTMifQ.ZpKirg.NeEcUdx51_beLfIjFVIdC60Jqj8"`
+```
+
+![alt text](</assets/img/osctf/Pasted image 20240713185817.png>)
+
+using the tool we can try to crack the secret code using the same tool with this command:
+
+```bash
+flask-unsign --unsign --cookie "eyJ1c2VybmFtZSI6InRlc3QyMTMifQ.ZpKirg.NeEcUdx51_beLfIjFVIdC60Jqj8"
+```
+
+and we got the secret key!!!
+
+![alt text](</assets/img/osctf/Pasted image 20240713185944.png>)
+Secret Key: `supersecretkey`
+
+so know we can sign our own cookies and change the username to admin.
+
+```bash
+flask-unsign --sign --cookie "{'username': 'admin'}" --secret 'supersecretkey'
+```
+
+![alt text](</assets/img/osctf/Pasted image 20240713190122.png>)
+
+and we got our new cookie, if we change it with the new one in our browser, we will see some players trolling, but if we go to /admin we will find the flag.
+
+![alt text](</assets/img/osctf/Pasted image 20240713190256.png>)
+
+We got the flag!!!
+
+Flag: `OSCTF{Av0id_S1mpl3_P4ssw0rDs}`
+
