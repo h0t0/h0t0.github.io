@@ -4,8 +4,6 @@ date: 2024-03-23 17:00:00 +0300
 categories: [writeups]
 tag: [ctf,web,flask]
 ---
-
-
 ## Introspection
 
 ### 100
